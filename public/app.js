@@ -39,11 +39,30 @@
   const footerApiStatus = document.querySelector("#footerApiStatus");
   const wibClock = document.querySelector("#wibClock");
   const systemPopup = document.querySelector("#systemPopup");
+  const systemPopupCard = document.querySelector(".system-popup-card");
   const systemPopupClose = document.querySelector("#systemPopupClose");
   const systemPopupButton = document.querySelector("#systemPopupButton");
   const pageLoader = document.querySelector("#pageLoader");
 
   let activeMode = "download";
+
+  if (systemPopupCard && window.matchMedia("(pointer: fine) and (prefers-reduced-motion: no-preference)").matches) {
+    systemPopupCard.addEventListener("pointermove", (event) => {
+      const bounds = systemPopupCard.getBoundingClientRect();
+      const x = (event.clientX - bounds.left) / bounds.width;
+      const y = (event.clientY - bounds.top) / bounds.height;
+      systemPopupCard.style.setProperty("--rx", `${(y - 0.5) * 15}deg`);
+      systemPopupCard.style.setProperty("--ry", `${(0.5 - x) * 18}deg`);
+      systemPopupCard.style.setProperty("--light-x", `${x * 100}%`);
+      systemPopupCard.style.setProperty("--light-y", `${y * 100}%`);
+    });
+    systemPopupCard.addEventListener("pointerleave", () => {
+      systemPopupCard.style.setProperty("--rx", "4deg");
+      systemPopupCard.style.setProperty("--ry", "-5deg");
+      systemPopupCard.style.setProperty("--light-x", "50%");
+      systemPopupCard.style.setProperty("--light-y", "18%");
+    });
+  }
 
   if (pageLoader) {
     const loaderStartedAt = performance.now();
