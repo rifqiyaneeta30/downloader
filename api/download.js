@@ -16,7 +16,7 @@ module.exports = async function handler(req, res) {
     const timeout = setTimeout(() => controller.abort(), 55000);
 
     const apiResponse = await fetch(
-      `https://everythingjkt48.my.id/api/download?apikey=${encodeURIComponent(apiKey)}`,
+      `https://apiv3.everythingjkt48.my.id/api/download?apikey=${encodeURIComponent(apiKey)}`,
       {
         method: "POST",
         headers: {

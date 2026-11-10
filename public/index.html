@@ -2,173 +2,467 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="BorDown — TikTok, Instagram, X, YouTube media downloader and Pinterest photo search.">
-  <title>BorDown — Media Downloader</title>
-  <link rel="icon" href="/favicon.png?v=3" type="image/png" sizes="256x256">
-  <link rel="icon" href="/favicon-32x32.png?v=3" type="image/png" sizes="32x32">
-  <link rel="icon" href="/favicon.svg?v=3" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="/favicon-192x192.png?v=3">
-  <link rel="shortcut icon" href="/favicon.png?v=3" type="image/png">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="BorDown — download videos and audio from TikTok, Instagram, YouTube, and X, or search Pinterest photos.">
+  <meta name="theme-color" content="#090909">
+  <title>BorDown — Video and Audio Downloader</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cg transform='rotate(-30 12 12)'%3E%3Ccircle cx='7.3' cy='3.2' r='1.45'/%3E%3Crect x='5.5' y='4.7' width='3.6' height='14.6' rx='1.8'/%3E%3Crect x='14.9' y='4.7' width='3.6' height='14.6' rx='1.8'/%3E%3Ccircle cx='16.7' cy='20.8' r='1.45'/%3E%3C/g%3E%3C/svg%3E" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=popup-3d-v3">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
+  <style>
+    html, body { background: #000000 !important; color: #ffffff; }
+    :root {
+      --bg: #000000;
+      --text: #ffffff;
+      --muted: #9a9a9a;
+      --stat: #d8d8d8;
+      --border: rgba(255, 255, 255, 0.16);
+      --border-soft: rgba(255, 255, 255, 0.12);
+      --logo: 15.5px;
+      --logo-mark: 22px;
+      --nav: 14px;
+      --nav-h: 40px;
+      --btn: 13.5px;
+      --btn-h: 40px;
+      --hero-btn-h: 42px;
+      --h1: 48px;
+      --lede: 15.5px;
+      --badge: 12.5px;
+      --stat-size: 13.5px;
+      --header-y: 22px;
+      --header-x: 40px;
+      --stats-x: 72px;
+      --stats-y: 36px;
+      --hero-gap: 85px;
+      --copy-max: 860px;
+      --lede-max: 470px;
+    }
+    html, body { background: #000000; background: var(--bg, #000000); color: #ffffff; color: var(--text, #ffffff); }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    [hidden] { display: none !important; }
+    html { scroll-behavior: smooth; }
+    body {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+      overflow-x: hidden;
+      position: relative;
+      min-height: 100vh;
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; }
+    .hero-photo { position: fixed; inset: 0; z-index: 0; width: 100%; height: 100%; object-fit: cover; opacity: 1; }
+    .page { position: relative; z-index: 1; display: grid; grid-template-rows: auto 1fr auto; min-height: 100vh; min-height: 100dvh; }
+    .grain { position: fixed; inset: 0; z-index: 100; pointer-events: none; }
+    .menu-backdrop { display: none; }
+    .header { position: relative; z-index: 50; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: var(--header-y) var(--header-x) 10px; }
+    .logo { display: inline-flex; align-items: center; justify-self: start; gap: 9px; color: #fff; font-size: var(--logo); font-weight: 600; letter-spacing: -.03em; }
+    .logo-mark { width: var(--logo-mark); height: var(--logo-mark); flex: none; }
+    .logo-suffix { font-weight: 400; }
+    .site-nav { display: flex; align-items: center; justify-self: center; gap: 8px; }
+    .nav-link { position: relative; display: inline-flex; height: var(--nav-h); align-items: center; justify-content: center; overflow: hidden; padding: 0 18px; border: 1px solid rgba(198,198,198,.55); border-radius: 7px; background: linear-gradient(105deg, #050505 0%, #2a2a2a 48%, #4a4a4a 100%); color: #f3f3f3; font-size: var(--nav); font-weight: 400; letter-spacing: -.01em; white-space: nowrap; transition: background .35s ease, border-color .35s ease, box-shadow .35s ease; }
+    .nav-link::before { position: absolute; inset: 0; content: ""; background: linear-gradient(115deg, transparent 30%, rgba(255,255,255,.16) 50%, transparent 70%); transform: translateX(-120%); transition: transform .6s ease; }
+    .nav-link:hover { border-color: rgba(235,235,235,.9); background: linear-gradient(105deg, #111 0%, #3a3a3a 45%, #6a6a6a 100%); box-shadow: 0 0 18px rgba(200,210,230,.18); }
+    .nav-link:hover::before { transform: translateX(120%); }
+    .nav-link span { position: relative; z-index: 1; }
+    .header-actions { display: flex; align-items: center; justify-self: end; gap: 10px; }
+    .btn { position: relative; isolation: isolate; display: inline-flex; height: var(--btn-h); align-items: center; justify-content: center; overflow: hidden; padding: 0 16px; border: 1px solid transparent; border-radius: 6px; font-size: var(--btn); font-weight: 500; letter-spacing: -.02em; line-height: 1; white-space: nowrap; cursor: pointer; transition: background .35s ease, border-color .35s ease, box-shadow .35s ease, color .35s ease, filter .35s ease; }
+    .btn::after { position: absolute; z-index: -1; inset: 0; content: ""; background: linear-gradient(115deg, transparent 20%, rgba(255,255,255,.45) 48%, transparent 76%); transform: translateX(-130%); transition: transform .65s ease; }
+    .btn:hover::after { transform: translateX(130%); }
+    .btn-solid { border-color: #fff; background: linear-gradient(180deg, #fff 0%, #e7e7e7 48%, #cfcfcf 100%); color: #111; box-shadow: inset 0 1px 0 rgba(255,255,255,.95); }
+    .btn-solid:hover { border-color: #f2f6ff; background: linear-gradient(180deg, #fff 0%, #f3f6ff 42%, #d5def2 100%); box-shadow: inset 0 1px 0 #fff, 0 0 22px rgba(186,208,255,.35), 0 8px 18px rgba(255,255,255,.12); }
+    .btn-ghost { border-color: rgba(198,198,198,.45); background: linear-gradient(135deg, rgba(255,255,255,.1), rgba(0,0,0,.45) 50%, rgba(160,175,200,.08)); color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,.12); }
+    .btn-ghost:hover { border-color: rgba(220,230,255,.75); background: linear-gradient(135deg, rgba(210,225,255,.18), rgba(0,0,0,.35) 48%, rgba(180,195,220,.16)); box-shadow: inset 0 1px 0 rgba(255,255,255,.22), 0 0 20px rgba(170,200,255,.22); }
+    .hero-ghost { border-color: rgba(198,198,198,.55); background: linear-gradient(135deg, rgba(255,255,255,.12), rgba(0,0,0,.5) 46%, rgba(150,170,200,.1)); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); }
+    .hero-ghost:hover { border-color: rgba(220,230,255,.8); box-shadow: 0 0 24px rgba(170,200,255,.28); }
+    .burger { display: none; }
+    .hero { display: flex; min-height: 0; align-items: flex-end; justify-content: center; padding: 8px 24px var(--hero-gap); }
+    .hero-copy { position: relative; z-index: 1; display: flex; width: 100%; max-width: var(--copy-max); flex-direction: column; align-items: center; text-align: center; }
+    .badge { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 22px; padding: 9px 15px; border: 0; border-radius: 5px; background: linear-gradient(90deg, #7d7d7d 0%, #2a2a2a 52%, #0a0a0a 100%); color: #f2f2f2; font-size: var(--badge); font-weight: 400; letter-spacing: -.01em; }
+    .badge-star { width: 18px; height: 20px; flex: none; filter: drop-shadow(0 0 3px rgba(255,255,255,.45)); animation: in-star .9s cubic-bezier(.16,1,.3,1) .28s both; }
+    h1 { color: #fff; font-size: var(--h1); font-weight: 500; letter-spacing: -.045em; line-height: 1.12; }
+    .headline-line { display: block; overflow: hidden; padding: .06em .15em .14em; }
+    h1 em { color: #9a9a9a; font-family: "Instrument Serif", "Times New Roman", Times, serif; font-size: 1.08em; font-weight: 400; letter-spacing: -.03em; animation: in-em 1.2s ease .72s both; }
+    .lede { max-width: var(--lede-max); margin-top: 18px; color: var(--muted); font-size: var(--lede); font-weight: 400; letter-spacing: -.015em; line-height: 1.55; }
+    .hero-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px; margin-top: 26px; }
+    .hero-actions .btn { height: var(--hero-btn-h); padding: 0 18px; }
+    .hero-actions .btn-solid:hover { box-shadow: inset 0 1px 0 #fff, 0 0 26px rgba(186,208,255,.4), 0 8px 18px rgba(255,255,255,.14); }
+    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; clip-path: inset(50%); }
+    .download-panel { width: min(100%, 720px); margin-top: 22px; text-align: left; }
+    .mode-tabs { display: flex; justify-content: center; gap: 8px; margin-bottom: 10px; }
+    .mode-tab { min-height: 32px; padding: 0 14px; border: 1px solid rgba(198,198,198,.35); border-radius: 5px; background: rgba(0,0,0,.52); color: #ddd; font-size: 12px; cursor: pointer; transition: background .25s ease, border-color .25s ease, color .25s ease; }
+    .mode-tab:hover, .mode-tab.active { border-color: rgba(255,255,255,.76); background: linear-gradient(105deg, #252525, #555); color: #fff; }
+    .url-field-wrap { display: flex; min-height: 48px; align-items: center; overflow: hidden; border: 1px solid rgba(220,220,220,.45); border-radius: 7px; background: rgba(0,0,0,.6); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); transition: border-color .25s ease, box-shadow .25s ease; }
+    .url-field-wrap:focus-within, .download-panel.drag-active .url-field-wrap { border-color: rgba(255,255,255,.9); box-shadow: 0 0 22px rgba(170,200,255,.2); }
+    .link-icon { padding-left: 15px; color: #bcbcbc; font-size: 18px; }
+    .url-field-wrap input { width: 100%; min-width: 0; height: 46px; padding: 0 12px; border: 0; outline: 0; background: transparent; color: #fff; font: inherit; font-size: 14px; }
+    .url-field-wrap input::placeholder { color: #a2a2a2; }
+    .clear-button { width: 34px; height: 34px; flex: none; border: 0; background: transparent; color: #ddd; font-size: 22px; cursor: pointer; }
+    .download-button { min-width: 144px; height: 46px; margin: 0 1px 0 8px; }
+    .download-button:disabled { cursor: wait; filter: grayscale(.35); opacity: .8; }
+    .download-options { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 10px 2px 0; color: #e4e4e4; font-size: 12px; }
+    .option-toggle { display: inline-flex; align-items: center; gap: 9px; cursor: pointer; }
+    .option-toggle input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+    .toggle-track { position: relative; width: 30px; height: 17px; border: 1px solid rgba(255,255,255,.4); border-radius: 20px; background: #282828; transition: background .2s ease; }
+    .toggle-track::after { position: absolute; top: 2px; left: 2px; width: 11px; height: 11px; border-radius: 50%; background: #ddd; content: ""; transition: transform .2s ease; }
+    .option-toggle input:checked + .toggle-track { background: #777; }
+    .option-toggle input:checked + .toggle-track::after { transform: translateX(13px); }
+    .option-toggle input:focus-visible + .toggle-track { outline: 2px solid #fff; outline-offset: 2px; }
+    .quality-option { display: inline-flex; align-items: center; gap: 8px; color: #aaa; font-family: "Inter", system-ui, sans-serif; font-size: 10px; letter-spacing: .08em; }
+    .quality-option select { min-height: 29px; padding: 0 8px; border: 1px solid rgba(255,255,255,.22); border-radius: 4px; background: #111; color: #f3f3f3; font: 12px "Inter", system-ui, sans-serif; letter-spacing: 0; }
+    .format-hint { display: block; padding: 8px 2px 0; color: #b8b8b8; font-size: 11px; line-height: 1.4; }
+    .supported-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 13px; margin-top: 13px; color: rgba(255,255,255,.78); font-size: 11px; }
+    .supported-row strong { color: #fff; font-weight: 500; }
+    .error-message { margin-top: 10px; color: #ffb1b1; font-size: 12px; text-align: center; }
+    .result-content { display: flex; align-items: center; gap: 12px; margin-top: 12px; padding: 10px 12px; border: 1px solid rgba(255,255,255,.3); border-radius: 6px; background: rgba(0,0,0,.62); text-align: left; }
+    .result-icon { display: grid; width: 28px; height: 28px; flex: none; place-items: center; border-radius: 50%; background: #fff; color: #111; }
+    .result-details { display: flex; min-width: 0; flex: 1; flex-direction: column; gap: 3px; }
+    .result-details strong { overflow: hidden; color: #fff; font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
+    .result-details span { overflow: hidden; color: #aaa; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+    .open-button { display: inline-flex; min-height: 32px; flex: none; align-items: center; gap: 8px; padding: 0 10px; border: 1px solid rgba(255,255,255,.55); border-radius: 4px; background: #eee; color: #111; font-size: 11px; }
+    .image-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(86px, 1fr)); gap: 8px; max-height: 170px; overflow: auto; margin-top: 10px; }
+    .gallery-item { overflow: hidden; aspect-ratio: 1; border: 1px solid rgba(255,255,255,.3); border-radius: 5px; }
+    .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
+    .stats { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 0 var(--stats-x) max(var(--stats-y), env(safe-area-inset-bottom)); color: var(--stat); }
+    .stat { display: inline-flex; align-items: center; gap: 14px; font-size: var(--stat-size); letter-spacing: -.015em; white-space: nowrap; }
+    .stat-icon { width: 20px; height: 20px; flex: none; }
+    .stat-icon-wide { width: 38px; height: 21px; flex: none; }
+    .appear { opacity: 1; animation-duration: 1.05s; animation-fill-mode: both; animation-timing-function: cubic-bezier(.16,1,.3,1); animation-delay: var(--d, .08s); }
+    .appear--scale { animation-name: in-scale; }
+    .appear--soft { animation-name: in-soft; }
+    .appear--mask { animation-name: in-mask; }
+    .appear--pop { animation-name: in-pop; }
+    .appear--btn { animation-name: in-btn; }
+    .appear--side { animation-name: in-side; }
+    .appear--stat { animation-name: in-stat; }
+    .lede.appear { animation-duration: 1.25s; }
+    .is-in { animation: none !important; opacity: 1 !important; transform: none !important; clip-path: none !important; filter: none !important; }
+    @keyframes in-scale { from { opacity: 0; transform: scale(.84); } to { opacity: 1; transform: none; } }
+    @keyframes in-soft { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+    @keyframes in-mask { from { opacity: 0; transform: translateY(40%); } to { opacity: 1; transform: none; } }
+    @keyframes in-pop { 0% { opacity: 0; transform: scale(.9); } 70% { opacity: 1; transform: scale(1.03); } 100% { opacity: 1; transform: scale(1); } }
+    @keyframes in-btn { from { opacity: 0; transform: translateY(18px) scale(.94); } to { opacity: 1; transform: none; } }
+    @keyframes in-side { from { opacity: 0; transform: translateX(22px); } to { opacity: 1; transform: none; } }
+    @keyframes in-stat { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+    @keyframes in-star { 0% { transform: scale(.2) rotate(-50deg); } 65% { transform: scale(1.2) rotate(8deg); } 100% { transform: scale(1) rotate(0); } }
+    @keyframes in-em { from { opacity: .35; filter: blur(4px); } to { opacity: 1; filter: none; } }
+    @media (min-width: 1600px) {
+      :root { --logo: 17px; --logo-mark: 24px; --nav: 15px; --nav-h: 44px; --btn: 15px; --btn-h: 44px; --hero-btn-h: 48px; --h1: 64px; --lede: 18px; --badge: 13.5px; --stat-size: 15px; --header-y: 28px; --header-x: 64px; --stats-x: 96px; --stats-y: 44px; --copy-max: 980px; --lede-max: 540px; }
+      .nav-link { padding: 0 20px; }
+      .badge { margin-bottom: 26px; }
+      .lede { margin-top: 22px; }
+      .hero-actions { gap: 12px; margin-top: 30px; }
+      .stat-icon { width: 22px; height: 22px; }
+      .stat-icon-wide { width: 45px; height: 24px; }
+    }
+    @media (min-width: 1920px) {
+      :root { --logo: 18px; --logo-mark: 26px; --nav: 16px; --nav-h: 48px; --btn: 16px; --btn-h: 48px; --hero-btn-h: 52px; --h1: 76px; --lede: 20px; --badge: 14.5px; --stat-size: 16px; --header-y: 32px; --header-x: 80px; --stats-x: 120px; --stats-y: 52px; --copy-max: 1120px; --lede-max: 620px; }
+      .site-nav { gap: 10px; }
+      .nav-link { padding: 0 22px; }
+      .btn { padding: 0 22px; }
+      .badge { padding: 10px 15px; }
+      .stat-icon-wide { width: 48px; height: 26px; }
+    }
+    @media (min-width: 2560px) {
+      :root { --h1: 88px; --lede: 22px; --header-x: 120px; --stats-x: 160px; --copy-max: 1280px; --lede-max: 680px; }
+    }
+    @media (min-width: 1280px) and (max-width: 1599px) {
+      :root { --h1: 54px; --lede: 16px; --header-x: 48px; --stats-x: 80px; --copy-max: 900px; }
+    }
+    @media (min-width: 901px) and (max-width: 1279px) {
+      :root { --logo: 15px; --nav: 13px; --nav-h: 36px; --btn: 13px; --btn-h: 38px; --hero-btn-h: 40px; --h1: 42px; --lede: 15px; --badge: 12px; --stat-size: 12.5px; --header-y: 16px; --header-x: 28px; --stats-x: 36px; --stats-y: 28px; --hero-gap: 64px; --copy-max: 760px; --lede-max: 440px; }
+      .nav-link { padding: 0 14px; }
+      .badge { margin-bottom: 16px; }
+      .lede { margin-top: 14px; }
+      .hero-actions { margin-top: 20px; }
+    }
+    @media (min-width: 901px) and (max-height: 850px) {
+      :root { --header-y: 14px; --stats-y: 24px; --hero-gap: 48px; --h1: 40px; }
+      .badge { margin-bottom: 12px; }
+      .lede { margin-top: 12px; }
+      .hero-actions { margin-top: 16px; }
+    }
+    @media (min-width: 901px) and (max-height: 720px) {
+      :root { --h1: 34px; --lede: 14px; --hero-gap: 32px; --stats-y: 18px; --nav-h: 30px; --btn-h: 34px; --hero-btn-h: 36px; }
+      .badge { margin-bottom: 8px; }
+    }
+    @media (min-width: 901px) {
+      html, body { height: 100%; overflow: hidden; }
+      .page { height: 100vh; height: 100dvh; overflow: hidden; }
+    }
+    @media (max-width: 900px) {
+      html, body { height: auto; overflow-x: hidden; overflow-y: auto; }
+      .page { min-height: 100vh; min-height: 100dvh; }
+      .header { grid-template-columns: 1fr auto auto; gap: 8px; padding: max(16px, env(safe-area-inset-top)) max(18px, env(safe-area-inset-right)) 10px max(18px, env(safe-area-inset-left)); }
+      .logo, .header-cta, .burger { position: relative; z-index: 80; }
+      .site-nav { position: fixed; z-index: 45; inset: 0; display: flex; width: 100%; height: 100vh; height: 100dvh; flex-direction: column; align-items: stretch; justify-content: center; gap: 12px; padding: max(96px, calc(env(safe-area-inset-top) + 88px)) 22px 32px; background: transparent; opacity: 0; visibility: hidden; transition: opacity .28s ease, visibility .28s ease; }
+      .menu-backdrop { position: fixed; z-index: 40; inset: 0; display: block; background: rgba(8,8,8,.42); opacity: 0; visibility: hidden; transition: opacity .28s ease, visibility .28s ease, backdrop-filter .28s ease; }
+      body.menu-open { overflow: hidden; }
+      .menu-open .menu-backdrop { opacity: 1; visibility: visible; -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px); }
+      .menu-open .site-nav { opacity: 1; visibility: visible; }
+      .nav-link { width: 100%; height: 56px; border-radius: 10px; font-size: 19px; }
+      .header-actions { gap: 8px; }
+      .header-cta { height: 46px; font-size: 15px; }
+      .burger { display: grid; width: 42px; height: 42px; place-content: center; gap: 5px; border: 1px solid var(--border); border-radius: 6px; background: rgba(8,8,8,.55); cursor: pointer; transition: border-color .25s ease, background .25s ease; }
+      .burger:hover { border-color: rgba(255,255,255,.32); background: rgba(255,255,255,.05); }
+      .burger span { display: block; width: 16px; height: 1.5px; border-radius: 1px; background: #fff; transition: transform .25s ease, opacity .2s ease; }
+      .menu-open .burger span:first-child { transform: translateY(6.5px) rotate(45deg); }
+      .menu-open .burger span:nth-child(2) { opacity: 0; }
+      .menu-open .burger span:last-child { transform: translateY(-6.5px) rotate(-45deg); }
+      .hero { padding: 20px 20px 64px; }
+      .hero-copy, .lede { max-width: 100%; }
+      .badge { font-size: 13.5px; }
+      :root { --logo: 16px; --btn: 15px; --btn-h: 46px; --hero-btn-h: 48px; --h1: 36px; --lede: 16.5px; --stat-size: 15px; --header-y: 16px; --header-x: 18px; --stats-x: 20px; --stats-y: 28px; --hero-gap: 36px; }
+      .stats { flex-direction: column; justify-content: center; gap: 16px; }
+      .stat { white-space: normal; }
+    }
+    @media (max-width: 560px) {
+      :root { --h1: 34px; --lede: 16px; --header-x: 16px; }
+      .hero-actions { width: 100%; flex-direction: column; }
+      .hero-actions .btn { width: 100%; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition: none !important; animation: none !important; }
+      .appear, .hero-photo, .hero h1 em, .badge-star { opacity: 1; transform: none; clip-path: none; filter: none; }
+    }
+    /* Downloader landing page */
+    :root { --bg: #090909; --text: #f6f6f4; --muted: #a5a5a0; --border: rgba(255,255,255,.14); }
+    html, body { min-height: 100%; height: auto; overflow-x: hidden; overflow-y: auto; background: #090909; }
+    body { background: radial-gradient(ellipse at 50% 34%, rgba(255,255,255,.075), transparent 34%), radial-gradient(ellipse at 50% 0%, #20201e 0%, #10100f 34%, #090909 72%); }
+    body::before { position: fixed; z-index: 0; inset: 0; pointer-events: none; background-image: linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px); background-size: 48px 48px; mask-image: linear-gradient(to bottom, black, transparent 78%); content: ""; }
+    .grain { z-index: 0; opacity: .12; }
+    .page { min-height: 100vh; min-height: 100dvh; height: auto; overflow: visible; grid-template-rows: auto 1fr auto; }
+    .header { width: min(100%, 1440px); margin: 0 auto; padding-top: 24px; padding-bottom: 16px; }
+    .logo { font-size: 17px; font-weight: 650; }
+    .logo-mark { width: 27px; height: 27px; border-radius: 6px; }
+    .logo-suffix { color: #a9a9a4; }
+    .site-nav { gap: 6px; }
+    .nav-link { height: 38px; padding: 0 15px; border-color: transparent; border-radius: 6px; background: transparent; color: #c7c7c2; font-size: 13px; }
+    .nav-link:hover { border-color: var(--border); background: rgba(255,255,255,.07); box-shadow: none; }
+    .header-actions { gap: 16px; }
+    .version-badge { display: inline-flex; min-width: 42px; height: 30px; align-items: center; justify-content: center; padding: 0 10px; border: 1px solid rgba(255,255,255,.16); border-radius: 999px; background: rgba(255,255,255,.045); color: #d0d0ca; font-size: 10px; font-weight: 600; letter-spacing: .1em; }
+    .api-speedometer { display: inline-flex; width: 154px; min-height: 48px; align-items: center; gap: 7px; padding: 5px 9px; border: 1px solid rgba(255,255,255,.12); border-radius: 7px; background: rgba(255,255,255,.035); color: #aaa; }
+    .api-gauge { width: 42px; height: 30px; flex: none; overflow: visible; }
+    .api-gauge-track { fill: none; stroke: rgba(255,255,255,.18); stroke-width: 2.3; stroke-linecap: round; }
+    .api-gauge-needle { fill: none; stroke: #b3b3ad; stroke-width: 2; stroke-linecap: round; transform-box: view-box; transform-origin: 22px 22px; transition: transform .45s cubic-bezier(.2,.75,.25,1), stroke .3s ease; }
+    .api-gauge-pin { fill: #ddd; }
+    .api-speedometer-copy { display: flex; min-width: 0; flex: 1; flex-direction: column; gap: 2px; }
+    .api-label { color: #777; font-size: 8px; letter-spacing: .13em; }
+    .api-speedometer-copy strong { color: #d5d5d0; font-size: 10px; font-weight: 600; letter-spacing: .08em; }
+    .api-latency { color: #888; font-size: 9px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .api-speedometer.api-fast .api-gauge-needle, .api-speedometer.api-fast .api-speedometer-copy strong { color: #a6d59b; stroke: #a6d59b; }
+    .api-speedometer.api-normal .api-gauge-needle, .api-speedometer.api-normal .api-speedometer-copy strong { color: #d5cb88; stroke: #d5cb88; }
+    .api-speedometer.api-slow .api-gauge-needle, .api-speedometer.api-slow .api-speedometer-copy strong { color: #e6a16d; stroke: #e6a16d; }
+    .api-speedometer.api-offline .api-speedometer-copy strong { color: #dc8c8c; }
+    .version-tag { display: inline-flex; align-items: center; justify-content: center; margin-top: 13px; padding: 4px 9px; border: 1px solid rgba(255,255,255,.15); border-radius: 999px; background: rgba(255,255,255,.045); color: #aaa9a2; font-size: 9px; font-weight: 600; letter-spacing: .12em; }
+    .btn-solid { border-radius: 6px; background: #f1f1ed; color: #10100f; box-shadow: none; }
+    .btn-solid:hover { background: #fff; box-shadow: 0 5px 24px rgba(255,255,255,.15); }
+    .hero { min-height: 0; align-items: center; padding: clamp(56px, 9vh, 110px) 24px 88px; }
+    .hero-copy { max-width: 880px; }
+    .badge { margin-bottom: 22px; border: 1px solid rgba(255,255,255,.13); border-radius: 999px; background: rgba(255,255,255,.055); color: #d7d7d2; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; }
+    .badge-star { width: 15px; height: 15px; }
+    h1 { max-width: 800px; font-size: clamp(42px, 5.5vw, 72px); font-weight: 480; letter-spacing: -.065em; line-height: 1.03; }
+    .headline-line { padding: .035em .08em .09em; }
+    h1 em { color: #aaa9a2; }
+    .lede { max-width: 570px; margin-top: 18px; color: #aaa9a2; font-size: 15px; line-height: 1.7; }
+    .download-panel { width: min(100%, 760px); margin-top: 34px; padding: 15px; border: 1px solid rgba(255,255,255,.13); border-radius: 11px; background: rgba(14,14,13,.82); box-shadow: 0 22px 80px rgba(0,0,0,.35), inset 0 1px rgba(255,255,255,.035); text-align: left; -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); }
+    .mode-tabs { justify-content: flex-start; gap: 5px; margin: 0 0 13px; }
+    .mode-tab { min-height: 34px; border-color: transparent; background: transparent; color: #9b9b95; font-size: 12px; }
+    .mode-tab:hover, .mode-tab.active { border-color: rgba(255,255,255,.1); background: rgba(255,255,255,.095); color: #f3f3ef; }
+    .url-field-wrap { min-height: 58px; border-color: rgba(255,255,255,.18); border-radius: 7px; background: #090909; }
+    .url-field-wrap input { height: 56px; font-size: 14px; }
+    .url-field-wrap input::placeholder { color: #777771; }
+    .link-icon { padding-left: 17px; color: #999; }
+    .download-button { min-width: 142px; height: 48px; margin-right: 5px; border-radius: 5px; }
+    .download-options { padding: 13px 3px 0; color: #c8c8c2; }
+    .quality-option { color: #898982; }
+    .quality-option select { min-height: 31px; border-color: rgba(255,255,255,.16); background: #171716; }
+    .format-hint { padding: 10px 3px 0; color: #898982; font-size: 11px; }
+    .supported-row { justify-content: flex-start; gap: 9px; margin: 14px 3px 2px; color: #777771; font-size: 11px; }
+    .supported-row strong { padding: 5px 9px; border: 1px solid rgba(255,255,255,.1); border-radius: 99px; background: rgba(255,255,255,.035); color: #c7c7c1; font-size: 10px; font-weight: 450; }
+    .hero-actions { gap: 9px; margin-top: 18px; }
+    .hero-actions .btn { height: 38px; font-size: 12px; }
+    .btn-ghost, .hero-ghost { border-color: transparent; background: transparent; color: #aaa; box-shadow: none; }
+    .btn-ghost:hover, .hero-ghost:hover { border-color: rgba(255,255,255,.14); background: rgba(255,255,255,.06); box-shadow: none; }
+    .stats { width: min(100%, 1440px); margin: 0 auto; padding-bottom: 26px; }
+    .stat { color: #999991; font-size: 11px; }
+    .stat-symbol { display: grid; width: 22px; height: 22px; flex: none; place-items: center; border: 1px solid rgba(255,255,255,.16); border-radius: 50%; color: #deded8; font-size: 10px; font-weight: 600; }
+    @media (min-width: 901px) { .page { min-height: 100vh; min-height: 100dvh; } }
+    @media (max-width: 900px) {
+      .header { grid-template-columns: 1fr auto; }
+      .site-nav { align-items: stretch; }
+      .nav-link { height: 48px; border-color: rgba(255,255,255,.1); background: rgba(20,20,19,.9); font-size: 15px; }
+      .header-actions { grid-column: 2; grid-row: 1; }
+      .header-cta { display: none; }
+      .hero { padding: 70px 20px 70px; }
+      .download-panel { margin-top: 28px; }
+      .stats { padding: 0 20px max(24px, env(safe-area-inset-bottom)); }
+    }
+    @media (max-width: 560px) {
+      .header { padding-top: max(16px, env(safe-area-inset-top)); }
+      .api-speedometer { width: 112px; min-height: 40px; gap: 4px; padding: 4px 6px; }
+      .api-gauge { width: 34px; height: 26px; }
+      .api-latency { display: none; }
+      .hero { padding: 54px 16px 54px; }
+      h1 { font-size: clamp(39px, 11vw, 54px); }
+      .lede { margin-top: 14px; font-size: 14px; }
+      .download-panel { margin-top: 24px; padding: 11px; border-radius: 9px; }
+      .mode-tabs { justify-content: space-between; gap: 2px; }
+      .mode-tab { padding: 0 8px; font-size: 11px; }
+      .url-field-wrap { position: relative; flex-wrap: wrap; overflow: visible; border: 0; background: transparent; }
+      .link-icon { position: absolute; top: 15px; left: 0; z-index: 1; }
+      .url-field-wrap input { height: 50px; padding-left: 40px; border: 1px solid rgba(255,255,255,.18); border-radius: 6px; background: #090909; }
+      .download-button { width: 100%; height: 46px; margin: 9px 0 0; }
+      .download-options { align-items: flex-start; flex-wrap: wrap; gap: 12px; }
+      .quality-option { flex-wrap: wrap; }
+      .supported-row { gap: 7px; }
+      .hero-actions { width: auto; flex-direction: row; }
+      .stats { align-items: flex-start; gap: 12px; }
+      .stat { gap: 9px; font-size: 10px; }
+    }
+  </style>
 </head>
 <body>
-  <div class="page-loader" id="pageLoader" role="status" aria-live="polite" aria-label="Loading BorDown">
-    <div class="loader-content">
-      <div class="loader-scene" aria-hidden="true">
-        <div class="loader-orbit loader-orbit-one"></div>
-        <div class="loader-orbit loader-orbit-two"></div>
-        <div class="loader-cube">
-          <div class="loader-face loader-front"><span class="loader-mark">B</span><span class="loader-face-caption">BORDOWN</span></div>
-          <div class="loader-face loader-back"></div>
-          <div class="loader-face loader-right"></div>
-          <div class="loader-face loader-left"></div>
-          <div class="loader-face loader-top"></div>
-          <div class="loader-face loader-bottom"></div>
-        </div>
-        <span class="loader-light loader-light-one"></span>
-        <span class="loader-light loader-light-two"></span>
-      </div>
-      <p class="loader-kicker">YOUR MEDIA, IN MOTION</p>
-      <p class="loader-title">Getting things ready<span>...</span></p>
-      <div class="loader-track" aria-hidden="true"><span class="loader-progress"></span></div>
-      <p class="loader-caption">Preparing your download space</p>
-    </div>
-  </div>
-  <div class="page-shell">
-    <header class="topbar">
-      <a class="brand" href="./" aria-label="BorDown home">
-        <svg class="brand-mark" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
-          <path d="M38 8h24v25h16L50 61 22 33h16V8Z" />
-          <path d="M8 42c3 28 15 42 34 42 4 0 8-1 12-2-8-17-22-27-40-32 17 3 31 8 40 19 1-13-5-23-17-28-9-3-19-4-29-7Z" />
-          <path d="M92 42c-3 28-15 42-34 42-4 0-8-1-12-2 8-17 22-27 40-32-17 3-31 8-40 19-1-13 5-23 17-28 9-3 19-4 29-7Z" />
-          <path d="M48 96c-5-15-14-27-28-37 18 9 29 22 34 37-1 3-4 3-6 0Z" />
-          <path d="M52 96c5-15 14-27 28-37-18 9-29 22-34 37 1 3 4 3 6 0Z" />
-        </svg>
-        <span>Bor<span class="brand-dot">Down</span></span>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="page">
+    <div class="menu-backdrop" aria-hidden="true"></div>
+    <header class="header">
+      <a class="logo appear appear--scale" style="--d:.08s" href="#top" aria-label="BorDown">
+        <img class="logo-mark" src="favicon.svg" alt="">
+        <span>Bor<span class="logo-suffix">Down</span></span>
       </a>
-
-      <div class="topbar-tools">
-        <div class="wib-clock" aria-live="polite" aria-label="Current time in WIB">
-          <span class="wib-label">WIB</span>
-          <span id="wibClock">--:--:--</span>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation">
+        <a class="nav-link appear appear--scale" style="--d:.16s" href="#downloadForm"><span>Downloader</span></a>
+        <a class="nav-link appear appear--soft" style="--d:.28s" href="#supported-platforms"><span>Platforms</span></a>
+        <a class="nav-link appear appear--scale" style="--d:.40s" href="#how-it-works"><span>How it works</span></a>
+      </nav>
+      <div class="header-actions">
+        <div class="api-speedometer api-offline" id="apiStatus" title="Checking API status" role="status" aria-live="polite">
+          <svg class="api-gauge" viewBox="0 0 44 27" aria-hidden="true">
+            <path class="api-gauge-track" d="M5 22 A17 17 0 0 1 39 22" />
+            <path class="api-gauge-needle" id="apiNeedle" d="M22 22 L22 7" />
+            <circle class="api-gauge-pin" cx="22" cy="22" r="2.6" />
+          </svg>
+          <span class="api-speedometer-copy"><span class="api-label">API STATUS</span><strong id="apiStatusText">CHECKING</strong></span>
+          <span class="api-latency" id="apiLatency">-- ms</span>
         </div>
-
-        <div class="api-meter" id="apiStatus" title="Checking API status...">
-          <div class="meter-face"><span class="meter-tick tick-one"></span><span class="meter-tick tick-two"></span><span class="meter-tick tick-three"></span><span class="meter-needle" id="apiNeedle"></span><span class="meter-center"></span></div>
-          <div class="meter-readout"><span class="status-dot"></span><span id="apiStatusText">CHECKING</span><small id="apiLatency">-- ms</small></div>
-        </div>
+        <a class="btn btn-solid header-cta appear appear--scale" style="--d:.34s" href="#downloadForm">Start downloading</a>
+        <button class="burger appear appear--scale" style="--d:.34s" type="button" aria-label="Open menu" aria-controls="site-nav" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
       </div>
     </header>
-
-    <main>
-      <section class="hero-section">
-        <div class="hero-copy">
-          <h1>Save your<br><em>File.</em></h1>
-          <p class="hero-description">Download your favorite videos and photos from TikTok, Instagram, YouTube, and X in seconds.</p>
+    <main class="hero" id="top">
+      <div class="hero-copy">
+        <div class="badge appear appear--pop" style="--d:.22s">
+          <svg class="badge-star" viewBox="0 0 24 24" fill="white" aria-hidden="true"><path d="M12 2.6C12.55 2.6 12.88 3.15 13.08 4.7c.62 4.7 1.52 5.6 6.22 6.22 1.55.2 2.1.53 2.1 1.08s-.55.88-2.1 1.08c-4.7.62-5.6 1.52-6.22 6.22-.2 1.55-.53 2.1-1.08 2.1s-.88-.55-1.08-2.1c-.62-4.7-1.52-5.6-6.22-6.22C3.15 12.88 2.6 12.55 2.6 12s.55-.88 2.1-1.08c4.7-.62 5.6-1.52 6.22-6.22C11.12 3.15 11.45 2.6 12 2.6Z"/></svg>
+          <span>VIDEO · AUDIO · PHOTOS</span>
         </div>
-
-        <div class="hero-object" aria-hidden="true">
-          <div class="object-orbit object-orbit-one"></div>
-          <div class="object-orbit object-orbit-two"></div>
-          <div class="object-cube">
-            <div class="cube-face cube-front"><svg viewBox="0 0 48 48"><path d="M24 7v22m0 0 9-9m-9 9-9-9M11 31v8h26v-8" /></svg></div>
-            <div class="cube-face cube-back"></div>
-            <div class="cube-face cube-right"></div>
-            <div class="cube-face cube-left"></div>
-            <div class="cube-face cube-top"></div>
-            <div class="cube-face cube-bottom"></div>
-          </div>
-          <span class="object-spark object-spark-one"></span>
-          <span class="object-spark object-spark-two"></span>
-        </div>
-
-        <div class="download-panel" id="dropZone">
-          <div class="panel-topline">
-            <span class="panel-label">Enter link</span>
-          </div>
-          <div class="mode-tabs" role="tablist" aria-label="Choose mode">
+        <h1>
+          <span class="headline-line appear appear--mask" style="--d:.42s">Download media from</span>
+          <span class="headline-line appear appear--mask" style="--d:.62s"><em>anywhere.</em> It's that easy.</span>
+        </h1>
+        <span class="version-tag">V2</span>
+        <p class="lede appear appear--soft" style="--d:.82s">Paste a TikTok, Instagram, YouTube, or X link. Want photos? Search Pinterest right here.</p>
+        <div class="download-panel appear appear--soft" style="--d:.9s" id="dropZone">
+          <div class="mode-tabs" role="tablist" aria-label="Choose downloader mode">
             <button class="mode-tab active" id="downloadMode" type="button" role="tab" aria-selected="true">Download media</button>
             <button class="mode-tab" id="youtubeMode" type="button" role="tab" aria-selected="false">YouTube</button>
             <button class="mode-tab" id="pinterestMode" type="button" role="tab" aria-selected="false">Search Pinterest</button>
           </div>
           <form id="downloadForm">
+            <label class="sr-only panel-label" for="urlInput">Paste a link to download</label>
             <div class="url-field-wrap">
               <span class="link-icon" aria-hidden="true">↗</span>
-              <input id="urlInput" name="url" type="url" placeholder="https://..." autocomplete="url" required>
+              <input id="urlInput" name="url" type="url" placeholder="Paste a link here..." autocomplete="url" required>
               <button class="clear-button" id="clearButton" type="button" aria-label="Clear link" hidden>×</button>
+              <button class="btn btn-solid download-button" id="downloadButton" type="submit"><span id="buttonText">Download now</span></button>
             </div>
             <div class="download-options">
-              <label class="option-toggle"><input id="audioOnlyInput" type="checkbox"><span class="toggle-track"></span><span>Audio only</span></label>
-              <label class="quality-option" for="qualityInput">QUALITY
-                <select id="qualityInput"><option value="">Maximum</option><option value="1080">1080p</option><option value="720">720p</option></select>
-                <select id="formatInput" hidden>
-                  <option value="auto">Auto</option>
-                  <option value="mp3">MP3</option>
-                  <option value="mp4">MP4</option>
-                  <option value="webm">WEBM</option>
+              <label class="option-toggle"><input id="audioOnlyInput" type="checkbox"><span class="toggle-track" aria-hidden="true"></span><span>Audio only</span></label>
+              <div class="quality-option"><label for="qualityInput">QUALITY</label>
+                <select id="qualityInput" aria-label="Video quality"><option value="">Maximum</option><option value="1080">1080p</option><option value="720">720p</option></select>
+                <select id="formatInput" aria-label="Download format">
+                  <option value="auto">Auto</option><option value="mp3">MP3</option><option value="mp4">MP4</option><option value="webm">WEBM</option>
                 </select>
-              </label>
+              </div>
             </div>
-            <small id="formatHint" class="format-hint">Video: format can be adjusted. Audio-only automatically uses MP3.</small>
-            <button class="download-button" id="downloadButton" type="submit">
-              <span id="buttonText">Download now</span>
-              <span class="button-arrow" aria-hidden="true">↗</span>
-            </button>
+            <small id="formatHint" class="format-hint">Video mode: choose quality and format. Audio-only automatically uses MP3.</small>
           </form>
-          <div class="supported-row">
-            <span>SUPPORT</span>
-            <span class="platform-chip"><b>♪</b> TikTok</span>
-            <span class="platform-chip"><b>◎</b> Instagram</span>
-            <span class="platform-chip"><b>▶</b> YouTube</span>
-            <span class="platform-chip"><b>𝕏</b> X</span>
-            <span class="platform-chip pinterest-chip"><b>▧</b> Pinterest</span>
+          <div class="supported-row" id="supported-platforms" aria-label="Supported platforms">
+            <span>Works with</span><strong>TikTok</strong><strong>Instagram</strong><strong>YouTube</strong><strong>X</strong><strong>Pinterest</strong>
           </div>
-        </div>
-        <div class="drop-caption"><span class="sparkle">✦</span> or drop a link anywhere in this area</div>
-      </section>
-
-      <section class="result-section" id="resultSection" aria-live="polite">
-        <div class="section-heading">
-          <p class="eyebrow">DOWNLOAD RESULTS</p>
-          <span class="result-count" id="resultCount">0 items</span>
-        </div>
-        <div class="result-card empty-state" id="emptyState">
-          <div class="empty-icon">↓</div>
-          <div><strong>No downloads yet</strong><span>Your files will appear here.</span></div>
-        </div>
-        <div class="result-card result-content" id="resultContent" hidden>
-          <div class="result-icon" aria-hidden="true">✓</div>
-          <div class="result-details">
-            <strong id="resultTitle">Media ready to download</strong>
-            <span id="resultMeta">Link processed successfully</span>
+          <div class="error-message" id="errorMessage" role="alert" hidden></div>
+          <div class="result-content" id="resultContent" aria-live="polite" hidden>
+            <div class="result-icon" aria-hidden="true">✓</div>
+            <div class="result-details"><strong id="resultTitle">Media ready to download</strong><span id="resultMeta">Link processed successfully</span></div>
+            <a class="open-button" id="resultLink" href="#" download>Download file <span>↓</span></a>
           </div>
-          <a class="open-button" id="resultLink" href="#" download>Download file <span>↓</span></a>
+          <div class="image-gallery" id="imageGallery" hidden></div>
         </div>
-        <div class="image-gallery" id="imageGallery" hidden></div>
-        <div class="error-message" id="errorMessage" role="alert" hidden></div>
-      </section>
+        <div class="hero-actions" id="how-it-works">
+          <span class="stat appear appear--soft" style="--d:.96s">01&nbsp; Paste a link</span>
+          <span class="stat appear appear--soft" style="--d:1.02s">02&nbsp; Choose a format</span>
+          <span class="stat appear appear--soft" style="--d:1.08s">03&nbsp; Save your media</span>
+        </div>
+      </div>
     </main>
-
-    <footer class="footer">
-      <span class="footer-credit"><span>BOR<span class="brand-dot">DOWN</span> / BY: <a class="footer-link" href="https://www.instagram.com/yaneeta30/" target="_blank" rel="noopener noreferrer">@yaneeta30</a></span><span class="powered-by">System powered by <strong>Everything JKT48</strong></span></span>
-      <span class="settings-button">API <span id="footerApiStatus">CHECKING</span></span>
+    <footer class="stats" aria-label="Downloader features">
+      <div class="stat appear appear--stat" style="--d:1.12s">
+        <span class="stat-symbol" aria-hidden="true">↗</span>
+        <span>Simple, straightforward downloads</span>
+      </div>
+      <div class="stat appear appear--stat" style="--d:1.28s">
+        <span class="stat-symbol" aria-hidden="true">MP3</span>
+        <span>Video and audio options</span>
+      </div>
+      <div class="stat appear appear--stat" style="--d:1.44s">
+        <span class="stat-symbol" aria-hidden="true">5</span>
+        <span>Five supported platforms</span>
+      </div>
     </footer>
   </div>
-  <div class="system-popup" id="systemPopup" role="dialog" aria-modal="true" aria-labelledby="systemPopupTitle">
-    <div class="system-popup-card">
-      <button class="system-popup-close" id="systemPopupClose" type="button" aria-label="Close notification">&times;</button>
-      <span class="system-popup-icon" aria-hidden="true">
-        <img class="system-popup-logo" src="https://rynex.everythingjkt48.my.id/logo.png" alt="Rynex logo" />
-      </span>
-      <p class="eyebrow">SYSTEM INFORMATION</p>
-      <h2 id="systemPopupTitle">This website works thanks to the system from <strong>Rynex JKT48</strong>.</h2>
-      <button class="system-popup-button" id="systemPopupButton" type="button">I Understand</button>
-    </div>
-  </div>
-  <script src="app.js?v=popup-3d-v3"></script>
+  <script src="app.js"></script>
+  <script>
+    (() => {
+      const body = document.body;
+      const burger = document.querySelector(".burger");
+      const nav = document.querySelector("#site-nav");
+      const closeMenu = () => {
+        body.classList.remove("menu-open");
+        burger.setAttribute("aria-expanded", "false");
+        burger.setAttribute("aria-label", "Open menu");
+      };
+      const toggleMenu = () => {
+        const open = !body.classList.contains("menu-open");
+        body.classList.toggle("menu-open", open);
+        burger.setAttribute("aria-expanded", String(open));
+        burger.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+      };
+      document.querySelectorAll(".appear").forEach((element) => {
+        element.addEventListener("animationend", () => element.classList.add("is-in"), { once: true });
+      });
+      burger.addEventListener("click", toggleMenu);
+      nav.addEventListener("click", (event) => {
+        if (event.target.closest("a")) closeMenu();
+      });
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") closeMenu();
+      });
+      window.matchMedia("(min-width: 901px)").addEventListener("change", (event) => {
+        if (event.matches) closeMenu();
+      });
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        document.querySelectorAll(".appear, .hero-photo").forEach((element) => {
+          const animations = element.getAnimations?.() || [];
+          if (!animations.some((animation) => animation.playState === "running" || animation.playState === "finished")) {
+            element.classList.add("is-in");
+          }
+        });
+      }));
+    })();
+  </script>
 </body>
 </html>

@@ -2,7 +2,7 @@ const { URL } = require("url");
 const { Readable } = require("stream");
 
 const apiKey = process.env.EVERYTHING_API_KEY;
-const allowedHost = "everythingjkt48.my.id";
+const allowedHost = "apiv3.everythingjkt48.my.id";
 const allowedMediaHosts = ["tiktokcdn.com", "tiktokcdn-us.com", "tiktokv.com", "ibytedtos.com", "byteoversea.com", "muscdn.com", "cdninstagram.com", "fbcdn.net", "googlevideo.com", "pinimg.com"];
 function isAllowedMediaHost(hostname) {
   return hostname === allowedHost || allowedMediaHosts.some((host) => hostname === host || hostname.endsWith(`.${host}`));

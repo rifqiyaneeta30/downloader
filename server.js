@@ -5,14 +5,22 @@ const { URL } = require("url");
 const { Readable } = require("stream");
 
 const port = 3000;
-const root = __dirname;
-const allowedHost = "everythingjkt48.my.id";
+const projectRoot = __dirname;
+const staticRoot = path.join(projectRoot, "public");
+const allowedHost = "apiv3.everythingjkt48.my.id";
 const allowedMediaHosts = ["tiktokcdn.com", "tiktokcdn-us.com", "tiktokv.com", "ibytedtos.com", "byteoversea.com", "muscdn.com", "cdninstagram.com", "fbcdn.net", "googlevideo.com", "pinimg.com"];
 function isAllowedMediaHost(hostname) {
   return hostname === allowedHost || allowedMediaHosts.some((host) => hostname === host || hostname.endsWith(`.${host}`));
 }
-const mimeTypes = { ".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".css": "text/css; charset=utf-8" };
-const envPath = path.join(root, ".env");
+const mimeTypes = {
+  ".html": "text/html; charset=utf-8",
+  ".js": "text/javascript; charset=utf-8",
+  ".css": "text/css; charset=utf-8",
+  ".svg": "image/svg+xml",
+  ".png": "image/png",
+  ".ico": "image/x-icon",
+};
+const envPath = path.join(projectRoot, ".env");
 if (fs.existsSync(envPath)) {
   for (const line of fs.readFileSync(envPath, "utf8").split(/\r?\n/)) {
     const match = line.match(/^([^#=]+)=(.*)$/);
@@ -34,7 +42,7 @@ const server = http.createServer(async (request, response) => {
     request.on("data", (chunk) => { body += chunk; });
     request.on("end", async () => {
       try {
-        const apiResponse = await fetch(`https://everythingjkt48.my.id/api/download?apikey=${encodeURIComponent(apiKey)}`, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` }, body });
+        const apiResponse = await fetch(`https://apiv3.everythingjkt48.my.id/api/download?apikey=${encodeURIComponent(apiKey)}`, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` }, body });
         response.writeHead(apiResponse.status, { "Content-Type": "application/json" });
         response.end(await apiResponse.text());
       } catch { response.writeHead(502); response.end(JSON.stringify({ ok: false, error: "API downloader tidak dapat dihubungi." })); }
@@ -67,7 +75,7 @@ const server = http.createServer(async (request, response) => {
     request.on("data", (chunk) => { body += chunk; });
     request.on("end", async () => {
       try {
-        const apiResponse = await fetch(`https://everythingjkt48.my.id/api/youtube?apikey=${encodeURIComponent(apiKey)}`, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` }, body });
+        const apiResponse = await fetch(`https://apiv3.everythingjkt48.my.id/api/youtube?apikey=${encodeURIComponent(apiKey)}`, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` }, body });
         response.writeHead(apiResponse.status, { "Content-Type": "application/json" });
         response.end(await apiResponse.text());
       } catch { response.writeHead(502); response.end(JSON.stringify({ ok: false, error: "API YouTube tidak dapat dihubungi." })); }
@@ -111,8 +119,9 @@ const server = http.createServer(async (request, response) => {
     return;
   }
 
-  const filePath = path.join(root, requestUrl.pathname === "/" ? "index.html" : requestUrl.pathname);
-  if (!filePath.startsWith(root) || !fs.existsSync(filePath)) { response.writeHead(404); response.end("Not found"); return; }
+  const filePath = path.resolve(staticRoot, `.${requestUrl.pathname === "/" ? "/index.html" : requestUrl.pathname}`);
+  const relativePath = path.relative(staticRoot, filePath);
+  if (relativePath.startsWith("..") || path.isAbsolute(relativePath) || !fs.existsSync(filePath)) { response.writeHead(404); response.end("Not found"); return; }
   response.writeHead(200, { "Content-Type": mimeTypes[path.extname(filePath)] || "application/octet-stream" });
   fs.createReadStream(filePath).pipe(response);
 });

@@ -9,7 +9,7 @@
   }
 } else {
   const API_ENDPOINT = "/api/download";
-  const MEDIA_BASE_URL = "https://everythingjkt48.my.id";
+  const MEDIA_BASE_URL = "https://apiv3.everythingjkt48.my.id";
 
   const form = document.querySelector("#downloadForm");
   const urlInput = document.querySelector("#urlInput");
@@ -136,23 +136,18 @@
       apiStatus.classList.remove("api-offline", "api-fast", "api-normal", "api-slow");
       apiStatus.classList.add(speedClass);
     }
-
     if (apiStatusText) {
       apiStatusText.textContent = isOnline ? (safeLatency < 400 ? "FAST" : safeLatency < 1200 ? "READY" : "SLOW") : "OFFLINE";
     }
-
     if (apiLatency) {
       apiLatency.textContent = isOnline ? `${Math.round(safeLatency)} ms` : "-- ms";
     }
-
     if (apiNeedle) {
       apiNeedle.style.transform = `rotate(${needleAngle}deg)`;
     }
-
     if (footerApiStatus) {
       footerApiStatus.textContent = isOnline ? "ONLINE" : "OFFLINE";
     }
-
     if (apiStatus) {
       apiStatus.title = `${isOnline ? "API active" : "API unavailable"} • ${isOnline ? `${Math.round(safeLatency)} ms` : "try again later"} • ${new Date(status.checkedAt).toLocaleTimeString("en-US")}`;
     }
@@ -263,7 +258,7 @@
       const link = document.createElement("a");
       link.className = "gallery-item";
       link.href = resolveMediaUrl(imageUrl);
-      link.download = `droply-foto-${index + 1}`;
+      link.download = `droply-photo-${index + 1}`;
 
       const image = document.createElement("img");
       image.src = resolveMediaUrl(imageUrl);
@@ -275,7 +270,7 @@
         try {
           await downloadFile(link.href, link.download);
         } catch (error) {
-          showError(error.message || "Download photo failed. Please try again.");
+          showError(error.message || "Photo download failed. Please try again.");
         }
       });
 
@@ -289,7 +284,7 @@
     if (resultLink) {
       resultLink.textContent = "Download photo  ↓";
       resultLink.href = resolveMediaUrl(images[0]);
-      resultLink.download = "droply-foto-1";
+      resultLink.download = "droply-photo-1";
     }
   }
 
@@ -308,7 +303,7 @@
 
     if (urlInput) {
       urlInput.type = isPinterest ? "search" : "url";
-      urlInput.placeholder = isPinterest ? "Example: Ronaldi" : isYoutube ? "https://youtube.com/watch?v=..." : "https://...";
+      urlInput.placeholder = isPinterest ? "Example: beach in Indonesia" : isYoutube ? "Paste a YouTube link..." : "Paste a link here...";
     }
 
     if (buttonText) {
@@ -317,7 +312,7 @@
 
     const panelLabel = document.querySelector(".panel-label");
     if (panelLabel) {
-      panelLabel.textContent = isPinterest ? "SEARCH FOR THE PHOTO YOU WANT" : isYoutube ? "PASTE YOUTUBE LINK" : "PASTE LINK HERE";
+      panelLabel.textContent = isPinterest ? "SEARCH FOR A PHOTO" : isYoutube ? "PASTE A YOUTUBE LINK" : "PASTE A LINK HERE";
     }
 
     const downloadOptions = document.querySelector(".download-options");
@@ -336,7 +331,7 @@
       formatInput.value = "mp3";
       formatInput.disabled = true;
       if (formatHint) {
-        formatHint.textContent = "Audio-only mode is active: format is automatically forced to MP3.";
+        formatHint.textContent = "Audio-only mode is active: format is automatically set to MP3.";
       }
       return;
     }
@@ -347,7 +342,7 @@
     }
 
     if (formatHint) {
-      formatHint.textContent = "Video mode: format can be adjusted. Audio-only mode automatically uses MP3.";
+      formatHint.textContent = "Video mode: format can be adjusted. Audio-only automatically uses MP3.";
     }
   }
 

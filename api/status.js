@@ -1,5 +1,5 @@
 const apiKey = process.env.EVERYTHING_API_KEY;
-const allowedHost = "everythingjkt48.my.id";
+const allowedHost = "apiv3.everythingjkt48.my.id";
 
 module.exports = async function handler(req, res) {
   if (req.method !== "GET") {

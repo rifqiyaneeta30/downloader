@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const sharp = require('sharp');
 
-const root = __dirname;
+const outputDir = path.join(__dirname, 'public');
 const svg = `
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
   <rect width="128" height="128" rx="28" fill="#f4efe8"/>
@@ -16,21 +16,22 @@ const svg = `
 </svg>`;
 
 (async () => {
+  fs.mkdirSync(outputDir, { recursive: true });
   const svgBuffer = Buffer.from(svg);
   await sharp(svgBuffer)
     .resize(256, 256)
     .png()
-    .toFile(path.join(root, 'favicon.png'));
+    .toFile(path.join(outputDir, 'favicon.png'));
 
   await sharp(svgBuffer)
     .resize(32, 32)
     .png()
-    .toFile(path.join(root, 'favicon-32x32.png'));
+    .toFile(path.join(outputDir, 'favicon-32x32.png'));
 
   await sharp(svgBuffer)
     .resize(192, 192)
     .png()
-    .toFile(path.join(root, 'favicon-192x192.png'));
+    .toFile(path.join(outputDir, 'favicon-192x192.png'));
 
-  console.log('Generated favicon assets');
+  console.log(`Generated favicon assets in ${outputDir}`);
 })();
